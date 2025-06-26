@@ -18,21 +18,29 @@ def get_feedback():
 
     rating = request.args.get("rating")
     sort = request.args.get("sort", "desc").lower()
+    if sort not in ("asc", "desc"):
+        sort = "desc"
 
     # Validate sort direction
     if sort not in ("asc", "desc"):
         sort = "desc"
 
     query = "SELECT * FROM feedback"
+    conditions = []
     params = []
 
     if rating:
-        query += " WHERE rating = ?"
+        conditions.append("rating = ?")
         params.append(rating)
 
-    query += f" ORDER BY created_at {sort}"
 
-    print("Executing query:", query, "with params:", params)
+    if conditions:
+        query += " WHERE " + " AND ".join(conditions)
+        query += f" ORDER BY created_at {sort}"
+
+        print("Executing query:", query, "with params:", params)
+
+ 
     cursor.execute(query, params)
     feedback = cursor.fetchall()
 

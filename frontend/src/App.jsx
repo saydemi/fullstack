@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 
 function App() {
   const [feedback, setFeedback] = useState([]);
-  const [rating, setRating] = useState(1);
+  const [rating, setRating] = useState();
   const [sort,setSort]=useState('desc');
  
 
@@ -13,8 +13,18 @@ function App() {
  const fetchFeedback = async () => {
 
   try {
-  console.log('asdfasdfasdfasf',1)
-   const response = await fetch(`http://localhost:5000/feedback?rating=${rating}&sort=${sort}`);
+  
+   
+    const params = new URLSearchParams();
+    if (rating !== null && rating !== undefined) {
+       params.append("rating", rating);
+    }
+
+   if (sort !== null && sort !== undefined) {
+       params.append("sort", sort);
+   }
+   const response = await fetch(`http://localhost:5000/feedback?${params.toString()}`);
+   //const response = await fetch(`http://localhost:5000/feedback?rating=${rating}&sort=${sort}`);
      if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
      }
@@ -36,6 +46,9 @@ function App() {
       <select onChange={(e) => setRating(e.target.value)}>
         <option value="">All Ratings</option>
         <option value="5">5 Stars</option>
+        <option value="4">4 Stars</option>
+        <option value="3">3 Stars</option>
+        <option value="2">2 Stars</option>
         <option value="1">1 Star</option>
       </select> 
       <ul>
